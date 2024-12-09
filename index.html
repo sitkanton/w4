@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор расходов</title>
+    <style>
+      
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .calculator {
+            width: 400px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 16px;
+        }
+
+        .calculator h2 {
+            text-align: center;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .form input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form button {
+            padding: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .form button:hover {
+            background-color: #0056b3;
+        }
+
+        .expenses {
+            list-style: none;
+            margin-bottom: 16px;
+        }
+
+        .expenses li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .expenses li button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .expenses li button:hover {
+            background-color: #c82333;
+        }
+
+        .total {
+            text-align: right;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        class ExpenseCalculator extends HTMLElement {
+            constructor() {
+                super();
+
+               
+                this.attachShadow({ mode: 'open' });
+
+             
+                this.shadowRoot.innerHTML = `
+                    <div class="calculator">
+                        <h2>Калькулятор расходов</h2>
+                        <div class="form">
+                            <input type="text" id="expense-name" placeholder="Название расхода" />
+                            <input type="number" id="expense-amount" placeholder="Сумма" />
+                            <button id="add-expense">Добавить расход</button>
+                        </div>
+                        <ul class="expenses" id="expense-list"></ul>
+                        <div class="total">Итого: <span id="total-amount">0</span> руб.</div>
+                    </div>
+                `;
+
+                this.expenses = [];
+                this.total = 0;
+
+                this.nameInput = this.shadowRoot.querySelector('#expense-name');
+                this.amountInput = this.shadowRoot.querySelector('#expense-amount');
+                this.addButton = this.shadowRoot.querySelector('#add-expense');
+                this.expenseList = this.shadowRoot.querySelector('#expense-list');
+                this.totalAmount = this.shadowRoot.querySelector('#total-amount');
+
+           
+                this.addButton.addEventListener('click', this.addExpense.bind(this));
+            }
+
+            addExpense() {
+                const name = this.
+nameInput.value.trim();
+                const amount = parseFloat(this.amountInput.value);
+
+                if (!name  isNaN(amount)  amount <= 0) {
+                    alert('Введите корректные данные.');
+                    return;
+                }
+
+             
+                const expense = { id: Date.now(), name, amount };
+
+              
+                this.expenses.push(expense);
+                this.updateUI();
+
+                this.nameInput.value = '';
+                this.amountInput.value = '';
+            }
+
+         
+            removeExpense(id) {
+                this.expenses = this.expenses.filter(expense => expense.id !== id);
+                this.updateUI();
+            }
+
+            updateUI() {
+              
+                this.expenseList.innerHTML = '';
+
+              
+                this.expenses.forEach(expense => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${expense.name}: ${expense.amount} руб.</span>
+                        <button data-id="${expense.id}">Удалить</button>
+                    `;
+
+                    li.querySelector('button').addEventListener('click', () => {
+                        this.removeExpense(expense.id);
+                    });
+
+                    this.expenseList.appendChild(li);
+                });
+
+                this.total = this.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+                this.totalAmount.textContent = this.total;
+            }
+        }
+
+     
+        customElements.define('expense-calculator', ExpenseCalculator);
+    </script>
+
+    <expense-calculator></expense-calculator>
+</body>
+</html>
