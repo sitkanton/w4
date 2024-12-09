@@ -137,10 +137,6 @@
 nameInput.value.trim();
                 const amount = parseFloat(this.amountInput.value);
 
-                if (!name  isNaN(amount)  amount <= 0) {
-                    alert('Введите корректные данные.');
-                    return;
-                }
 
              
                 const expense = { id: Date.now(), name, amount };
